@@ -584,6 +584,7 @@
           "keyValues": [
             {
               "key": "phoneNumber",
+              "type": "N",
               "value": "={{ $json.body.phone_number }}"
             }
           ]
@@ -618,9 +619,9 @@
           },
           "conditions": [
             {
-              "id": "4338a3ed-434d-4935-857a-870a52dcd1bf",
-              "leftValue": "={{ $('User Lookup').length > 0 }}",
-              "rightValue": 0,
+              "id": "e8d43a0a-8d41-4490-ab40-5e0f0ed67793",
+              "leftValue": "={{ $('User Lookup').item.json.isEmpty() }}",
+              "rightValue": "",
               "operator": {
                 "type": "boolean",
                 "operation": "true",
@@ -654,8 +655,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -2520,
-        -1240
+        -2000,
+        -1280
       ],
       "id": "b28abd68-aba7-424d-8ff3-12d346051e4b",
       "name": "user added"
@@ -669,7 +670,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -2520,
+        -2300,
         -1580
       ],
       "id": "98796665-2d65-40e7-a0a8-c75c407b29e5",
@@ -682,7 +683,7 @@
           "fieldValues": [
             {
               "fieldId": "phoneNumber",
-              "fieldValue": "=\"{{ $('Webhook').item.json.body.phone_number }}\""
+              "fieldValue": "={{ $('Webhook').item.json.body.phone_number }}"
             },
             {
               "fieldId": "name",
@@ -695,7 +696,7 @@
       "type": "n8n-nodes-base.awsDynamoDb",
       "typeVersion": 1,
       "position": [
-        -2820,
+        -2280,
         -1280
       ],
       "id": "c3612117-dd0b-4b78-ba70-ef391f03cc02",
@@ -1089,6 +1090,41 @@
       "id": "eb7820cb-ea69-4955-bc14-965e1f319ee7",
       "name": "Loop Over Items",
       "executeOnce": true
+    },
+    {
+      "parameters": {
+        "phoneNumberId": "630936206780909",
+        "recipientPhoneNumber": "=\"{{ $json.phoneNumber }}\"",
+        "template": "rsync_welcome_message|en",
+        "components": {
+          "component": [
+            {
+              "bodyParameters": {
+                "parameter": [
+                  {
+                    "text": "={{ $json.name }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -1740,
+        -1280
+      ],
+      "id": "b10d2778-6003-401b-a84a-0c1f333fc5b7",
+      "name": "Send template",
+      "webhookId": "faef9ede-559d-4dfd-bb60-7581668fc8ca",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "oHjad5Vconv3UjgN",
+          "name": "WhatsApp Reply"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -1334,14 +1370,14 @@
       "main": [
         [
           {
-            "node": "user exists",
+            "node": "add user record",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "add user record",
+            "node": "user exists",
             "type": "main",
             "index": 0
           }
@@ -1525,13 +1561,24 @@
           }
         ]
       ]
+    },
+    "user added": {
+      "main": [
+        [
+          {
+            "node": "Send template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "d2d06181-3592-4f56-ae92-c15384895164",
+  "versionId": "8e907bdb-78ae-494a-9060-706533aa37f3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "07c6ef78a35c2883a05a3ad010352ba4756c8216f45cb3d16a147f646cae9bce"

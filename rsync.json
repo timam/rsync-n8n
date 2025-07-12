@@ -1,0 +1,1541 @@
+{
+  "name": "rsync",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {
+          "messageStatusUpdates": [
+            "all"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3860,
+        0
+      ],
+      "id": "a1619adf-f6b9-422e-a7ce-1088fe5dfcb7",
+      "name": "WhatsApp Trigger",
+      "webhookId": "facc3b23-eb09-4e40-bf3a-feba2e2d5be5",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "3tijXL5Ry8rA8nYq",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages[0].audio }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "ea066616-421f-446f-8a87-1c43db041167"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "87a4c808-e280-4306-afa8-aca1d31c0533",
+                    "leftValue": "={{ $json.messages[0].text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5c464718-a793-456c-af22-d2f93f6b0717",
+                    "leftValue": "={{ $json.messages[0].document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Document"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f837ae03-e123-49ed-b76b-ba23319de785",
+                    "leftValue": "={{ $json.messages[0].image }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -3600,
+        -20
+      ],
+      "id": "b1a03da2-9650-4ec9-90f3-5b8855e6cf19",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3120,
+        -920
+      ],
+      "id": "31811185-a8de-43de-9cb2-2050a30e20c3",
+      "name": "Download Audio",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rfwaiRNTCrJswkEG",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2900,
+        -920
+      ],
+      "id": "3ca63998-186b-45c9-8e9a-80d738ab7109",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "3Bfip01C8oYvKUqp",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1aee819c-1b49-483e-92d9-ad39560cdadc",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "dd1e34c7-2147-4b42-a555-b64fb04a3da9",
+              "name": "phoneNumber",
+              "value": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "cb019ebe-412b-4d28-a37a-f83514a2b717",
+              "name": "source",
+              "value": "WhatsApp Trigger",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -900
+      ],
+      "id": "02d4e06e-8d8b-4c5a-8536-af92461512e8",
+      "name": "Audio Prompt"
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.messages[0].audio.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -3340,
+        -920
+      ],
+      "id": "164a01d3-ca50-4fb2-a5fb-6da9514ce975",
+      "name": "Get Audio URL",
+      "webhookId": "bbc45978-ffae-41e6-9796-44ead153b0c6",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "oHjad5Vconv3UjgN",
+          "name": "WhatsApp Reply"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.messages[0].document.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        -3320,
+        -380
+      ],
+      "id": "589e71c7-7a50-4d4c-853e-153f89188acd",
+      "name": "Get Document URL",
+      "webhookId": "e656d38a-5b70-41f6-b78a-b2107ceaf6c2",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "oHjad5Vconv3UjgN",
+          "name": "WhatsApp Reply"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2840,
+        -380
+      ],
+      "id": "79230234-d523-4065-8ce5-17a19e74ec0f",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rfwaiRNTCrJswkEG",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -2360,
+        -700
+      ],
+      "id": "bc9771a5-8086-4729-863d-1db3045b1784",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fa8f01b9-94a8-4618-a90b-52b0dd553b8a",
+              "leftValue": "={{ $binary.data.mimeType }}",
+              "rightValue": "application/pdf",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2540,
+        -380
+      ],
+      "id": "94a101c2-1831-44d6-ba45-75d40cc9c749",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "caab1234-6171-435c-b25f-a2854739227e",
+              "name": "text",
+              "value": "user uploaded non supported file type. ask user to pload resume in pdf.",
+              "type": "string"
+            },
+            {
+              "id": "900deaa4-541e-40fb-b81d-380b7e0b1d0e",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "b7b34fb2-7c5f-4bac-b075-03df49f4104d",
+              "name": "source",
+              "value": "WhatsApp Trigger",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -340
+      ],
+      "id": "217a917a-eb5e-4b10-a207-58ebf96577a2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a resume validator. Analyze the provided text and determine if it's a resume/CV. A resume typically contains:\n- Personal information (name, contact details)\n- Work experience/employment history\n- Education background\n- Skills section\n- Professional summary/objective\n\nRespond with only 'YES' if it's a resume, or 'NO' if it's not a resume. Do not provide explanations."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1880,
+        -700
+      ],
+      "id": "959f9ae8-8b08-47a8-889f-f36726e83bec",
+      "name": "Resume Validator"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.trim().toUpperCase() }}",
+                    "rightValue": "YES",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "581ff9c2-eae7-4505-8cae-5b40765ae20c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Valid_Resume"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d20e365b-1a2a-480d-ac40-29057757eaa0",
+                    "leftValue": "={{ $json.output.trim().toUpperCase() }}",
+                    "rightValue": "NO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Invalid_Resume"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1300,
+        -700
+      ],
+      "id": "2de87322-6be0-437e-8c8e-9b2c1a26dffb",
+      "name": "isValid"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -280
+      ],
+      "id": "93c9db9a-57fd-49a9-b4e7-479c1c0a55f5",
+      "name": "AI Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3Bfip01C8oYvKUqp",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.phoneNumber }}",
+        "databaseName": "n8n",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -280
+      ],
+      "id": "91446b17-7fee-4fa2-ba91-db395003f974",
+      "name": "AI Memory",
+      "credentials": {
+        "mongoDb": {
+          "id": "S06HMLytAGcpawM1",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1880,
+        -520
+      ],
+      "id": "aa2b20c4-d05c-4451-b13b-15549586d8b6",
+      "name": "AI Validate Resume",
+      "credentials": {
+        "openAiApi": {
+          "id": "3Bfip01C8oYvKUqp",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e616bfa4-ad20-449e-b6fb-9715416f8fc8",
+              "name": "text",
+              "value": "={{ $json.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "c79e59cc-e0a6-4fe1-b47d-481cb547d052",
+              "name": "phoneNumber",
+              "value": "={{ $json.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "aeb93593-0b48-41db-a34d-47170c8c34fc",
+              "name": "source",
+              "value": "WhatsApp Trigger",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -700,
+        20
+      ],
+      "id": "2d3223b6-5fb0-409e-8ba5-7dcdd2deb524",
+      "name": "Text Only Prompt"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "subscribe",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -3860,
+        -1420
+      ],
+      "id": "c06350b6-43c3-4c13-a3d6-fe8deb684044",
+      "name": "Webhook",
+      "webhookId": "307b105c-d822-43f6-9dbc-dd5dbc555c13"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableName": "rsync-users",
+        "select": "SPECIFIC_ATTRIBUTES",
+        "keysUi": {
+          "keyValues": [
+            {
+              "key": "phoneNumber",
+              "value": "={{ $json.body.phone_number }}"
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.awsDynamoDb",
+      "typeVersion": 1,
+      "position": [
+        -3400,
+        -1420
+      ],
+      "id": "81d1c469-19a5-408a-a626-0cc7bd271853",
+      "name": "User Lookup",
+      "alwaysOutputData": true,
+      "notesInFlow": false,
+      "credentials": {
+        "aws": {
+          "id": "s0FymeCVCIEzzMyN",
+          "name": "aws"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4338a3ed-434d-4935-857a-870a52dcd1bf",
+              "leftValue": "={{ $('User Lookup').length > 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3120,
+        -1420
+      ],
+      "id": "107a4634-b261-4838-988c-6c3c1c4256e9",
+      "name": "Check User",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"result\": \"user added\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2520,
+        -1240
+      ],
+      "id": "b28abd68-aba7-424d-8ff3-12d346051e4b",
+      "name": "user added"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"user exists\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2520,
+        -1580
+      ],
+      "id": "98796665-2d65-40e7-a0a8-c75c407b29e5",
+      "name": "user exists"
+    },
+    {
+      "parameters": {
+        "tableName": "rsync-users",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "phoneNumber",
+              "fieldValue": "=\"{{ $('Webhook').item.json.body.phone_number }}\""
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $('Webhook').item.json.body.name }}"
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.awsDynamoDb",
+      "typeVersion": 1,
+      "position": [
+        -2820,
+        -1280
+      ],
+      "id": "c3612117-dd0b-4b78-ba70-ef391f03cc02",
+      "name": "add user record",
+      "credentials": {
+        "aws": {
+          "id": "s0FymeCVCIEzzMyN",
+          "name": "aws"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "189eec02-71f9-412d-aeee-3372f8eec3c7",
+              "name": "phoneNumber",
+              "value": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "00f37943-afba-45e7-a96c-65656796347a",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3080,
+        -380
+      ],
+      "id": "9e18afc3-8830-4931-82fd-0551ccb31072",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "22d2d4e5-bb8e-414a-9bc6-ba7d5e7947dd",
+              "name": "phoneNumber",
+              "value": "={{ $('Edit Fields1').item.json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "69e9b005-459f-4c10-86fe-1cada9928edb",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2140,
+        -700
+      ],
+      "id": "8b937704-b1dc-4122-b538-889dd9a6fba9",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0a4b6554-ac65-4a9a-8c51-444a3050a58b",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "3849afc2-e30d-467e-b2df-890d2fe8b5b7",
+              "name": "phoneNumber",
+              "value": "={{ $('Edit Fields3').item.json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "192e6e9c-2cae-4824-8020-b5db1091a369",
+              "name": "text",
+              "value": "={{ $('Edit Fields3').item.json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1500,
+        -700
+      ],
+      "id": "4aad90cc-3cbd-4425-abae-572715574b04",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "630936206780909",
+        "recipientPhoneNumber": "={{ $json.phoneNumber }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        960,
+        -600
+      ],
+      "id": "e15d8ed4-e370-42ec-8392-2f7da2737120",
+      "name": "Send message",
+      "webhookId": "613d86e4-91ba-4657-8837-99e53fdfd9b6",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "oHjad5Vconv3UjgN",
+          "name": "WhatsApp Reply"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2fb82c0b-f1d8-4d9d-b257-583339422a3c",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "445a9719-ed28-43ce-8cac-4ba9d5c6bd31",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "95242f56-2c2a-422d-98a4-bde7798d8f37",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        20,
+        -600
+      ],
+      "id": "afcf48d0-7752-4620-ac14-3e3264d96e94",
+      "name": "phoneNumber"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -600
+      ],
+      "id": "d2b3ad89-a95d-4082-8902-e1532c4790b7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "09bca2d0-517a-43a0-a4b8-98a71464a378",
+              "name": "phoneNumber",
+              "value": "={{ $('phoneNumber').item.json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "71a73aa5-6259-425a-aee6-01d038c8f588",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "e0535257-0907-46ae-b3e1-938dcd1af67d",
+              "name": "source",
+              "value": "={{ $('phoneNumber').item.json.source }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        -600
+      ],
+      "id": "50414b1a-f3c3-478d-90fa-a33e04a37dd3",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1f7f8ff-2cab-43a6-bc54-ca111f01cf1a",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "84ccb767-d529-4c5f-a2af-fa7ff5e1e9d0",
+              "name": "text",
+              "value": "looks like uploaded file is not a resume",
+              "type": "string"
+            },
+            {
+              "id": "2488b68e-5f65-4ebe-9fc7-a1b2fccb9827",
+              "name": "source",
+              "value": "WhatsApp Trigger",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -520
+      ],
+      "id": "c6a69cac-0bc1-4d2e-9394-9ca7f90aa5c9",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableName": "rsync-users",
+        "scan": true,
+        "returnAll": true,
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.awsDynamoDb",
+      "typeVersion": 1,
+      "position": [
+        840,
+        540
+      ],
+      "id": "908ca0b8-14ca-46ee-96ba-6af4a9f5e41c",
+      "name": "Get many items",
+      "credentials": {
+        "aws": {
+          "id": "s0FymeCVCIEzzMyN",
+          "name": "aws"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        540
+      ],
+      "id": "1f2cb818-ff08-415d-85f7-0d217412044b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "56705e73-74ba-4a8e-8e21-56cbf6b79eed",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "=WhatsApp Trigger",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1460,
+        -600
+      ],
+      "id": "2045c0e7-094c-4d5c-99d7-4dafe3c77e9f",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a781e742-ef97-49b6-90d1-9c4fd41cd332",
+              "name": "source",
+              "value": "={{ $('phoneNumber').item.json.source }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1220,
+        -600
+      ],
+      "id": "d2c77d00-7e6a-4910-b39e-6e64c24018e0",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a00ee257-3d18-4af5-bd32-67259b06fdde",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber.N }}",
+              "type": "string"
+            },
+            {
+              "id": "6eeafc73-eba5-4469-9df6-d9168eb3d730",
+              "name": "text",
+              "value": "=ask {{ $json.name.S }} to share weekly uupdate",
+              "type": "string"
+            },
+            {
+              "id": "d07f0221-5271-4312-b259-c0bce25a0a0e",
+              "name": "source",
+              "value": "cron",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2000,
+        560
+      ],
+      "id": "c27b2570-110e-439c-ba33-46ae067257e8",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1640,
+        540
+      ],
+      "id": "eb7820cb-ea69-4955-bc14-965e1f319ee7",
+      "name": "Loop Over Items",
+      "executeOnce": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get Audio URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text Only Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Document URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Audio Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Prompt": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio URL": {
+      "main": [
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Document URL": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Validator": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "isValid": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Validate Resume": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume Validator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Only Prompt": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "User Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Lookup": {
+      "main": [
+        [
+          {
+            "node": "Check User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check User": {
+      "main": [
+        [
+          {
+            "node": "user exists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add user record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add user record": {
+      "main": [
+        [
+          {
+            "node": "user added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Resume Validator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "isValid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "phoneNumber": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get many items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many items": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d2d06181-3592-4f56-ae92-c15384895164",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "07c6ef78a35c2883a05a3ad010352ba4756c8216f45cb3d16a147f646cae9bce"
+  },
+  "id": "062TdCrIMTv4XVUL",
+  "tags": []
+}

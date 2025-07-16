@@ -464,8 +464,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        240,
-        -280
+        1760,
+        160
       ],
       "id": "93c9db9a-57fd-49a9-b4e7-479c1c0a55f5",
       "name": "AI Model",
@@ -486,8 +486,8 @@
       "type": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
       "typeVersion": 1,
       "position": [
-        360,
-        -280
+        1880,
+        160
       ],
       "id": "91446b17-7fee-4fa2-ba91-db395003f974",
       "name": "AI Memory",
@@ -553,7 +553,7 @@
       "typeVersion": 3.4,
       "position": [
         -700,
-        20
+        -20
       ],
       "id": "2d3223b6-5fb0-409e-8ba5-7dcdd2deb524",
       "name": "Text Only Prompt"
@@ -642,7 +642,7 @@
       ],
       "id": "107a4634-b261-4838-988c-6c3c1c4256e9",
       "name": "Check User",
-      "alwaysOutputData": true
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -812,8 +812,8 @@
       "type": "n8n-nodes-base.whatsApp",
       "typeVersion": 1,
       "position": [
-        960,
-        -600
+        2480,
+        -200
       ],
       "id": "e15d8ed4-e370-42ec-8392-2f7da2737120",
       "name": "Send message",
@@ -842,8 +842,8 @@
               "type": "string"
             },
             {
-              "id": "95242f56-2c2a-422d-98a4-bde7798d8f37",
-              "name": "source",
+              "id": "2b24b639-5fdd-4b09-9d2a-6999d363deb7",
+              "name": "=source",
               "value": "={{ $json.source }}",
               "type": "string"
             }
@@ -854,8 +854,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        20,
-        -600
+        80,
+        -340
       ],
       "id": "afcf48d0-7752-4620-ac14-3e3264d96e94",
       "name": "phoneNumber"
@@ -863,14 +863,16 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $json.text }}",
-        "options": {}
+        "text": "=Action: {{ $json.type }}\nMessage: {{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are \"rsync\" - a resume update assistant. Your ONLY purpose is to help users keep their resume updated by collecting weekly work updates.\n\nCORE FUNCTIONS:\n1. Collect weekly work updates from users\n2. Ensure updates include workplace impact and contributions\n3. Store professional updates in database\n4. Share stored updates when requested\n5. Handle resume file uploads (PDF only)\n\nRESPONSE STYLE:\n- Friendly, casual, short and precise\n- Professional tone for work-related discussions\n- No lengthy explanations\n\nWEEKLY UPDATE REQUIREMENTS:\nAsk follow-up questions if user doesn't clearly mention:\n- Last week's learnings\n- Last week's contributions to workplace\n- Last week's work impact in workplace\n\nGREETING RESPONSES:\n- \"Hey! Ready for your weekly update?\"\n- \"Hi there! How was your week at work?\"\n- \"Hello! Time to capture this week's achievements?\"\n\nMEMORY USAGE:\n- Remember all user conversations. User can share update in different messages, you should make complete update in following format [things they learned, things they contributed to their workplace, impact they made to their workplace]\n- Once user update satisfies things they learned, things they contributed to their workplace, impact they made to their workplace] make it sound professional ask user to verify if that is the way he want to store in memory.\n- User can have multiple updates in a week. we should store them accordingly. \n- Store conversation context\n\nSTRICT BOUNDARIES:\n- ONLY resume updates - refuse all other requests\n- Response: \"I'm designed specifically for resume updates. How can I help you track your weekly work progress?\"\n- Accept PDF resumes only\n- Don't return full resume content in responses\n\nRESUME HANDLING:\n- First interaction: \"Please share your current resume in PDF format\"\n- After upload: \"Thanks! Resume stored. Now, tell me about your work this week.\"\n- For new resumes: \"Got your updated resume. What's new this week?\"\n\nCONTEXT AWARENESS:\n- Message Type: {{ $json.type }}\n\n\n"
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2,
       "position": [
-        240,
-        -600
+        1760,
+        -200
       ],
       "id": "d2b3ad89-a95d-4082-8902-e1532c4790b7",
       "name": "AI Agent"
@@ -892,7 +894,7 @@
               "type": "string"
             },
             {
-              "id": "e0535257-0907-46ae-b3e1-938dcd1af67d",
+              "id": "adad2d62-fb9f-4567-983e-5104a8f5a641",
               "name": "source",
               "value": "={{ $('phoneNumber').item.json.source }}",
               "type": "string"
@@ -904,8 +906,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        640,
-        -600
+        2180,
+        -200
       ],
       "id": "50414b1a-f3c3-478d-90fa-a33e04a37dd3",
       "name": "Edit Fields5"
@@ -1013,11 +1015,12 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1460,
-        -600
+        3000,
+        -200
       ],
       "id": "2045c0e7-094c-4d5c-99d7-4dafe3c77e9f",
-      "name": "If1"
+      "name": "If1",
+      "executeOnce": true
     },
     {
       "parameters": {
@@ -1036,8 +1039,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1220,
-        -600
+        2760,
+        -200
       ],
       "id": "d2c77d00-7e6a-4910-b39e-6e64c24018e0",
       "name": "Edit Fields2"
@@ -1071,7 +1074,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2000,
+        3460,
         560
       ],
       "id": "c27b2570-110e-439c-ba33-46ae067257e8",
@@ -1084,7 +1087,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1640,
+        3140,
         540
       ],
       "id": "eb7820cb-ea69-4955-bc14-965e1f319ee7",
@@ -1125,6 +1128,487 @@
           "name": "WhatsApp Reply"
         }
       }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "STOP",
+              "description": "User wants to stop receiving messages. Keywords is STOP"
+            },
+            {
+              "category": "USER_QUESTION",
+              "description": "User is asking specific questions about rsync. Example: How can i get my previous weekly updates?"
+            },
+            {
+              "category": "USER_GREETING",
+              "description": "User is greeting or engaging in social conversation. Examples: hi, hello, hey, good morning, good evening, how are you, thanks, thank you, bye, goodbye, see you"
+            },
+            {
+              "category": "RSYNC_HELP",
+              "description": "User is requesting explanations about rsync. Examples: how does rsync work. Keyword: HELP"
+            },
+            {
+              "category": "OFF_TOPIC",
+              "description": "User is asking about topics unrelated to rsync, resume, or career development. General questions about other technologies, personal topics, or unrelated discussions"
+            },
+            {
+              "category": "RSYNC_FOLLOWUP_WITH_USER_FOR_WEEKLY_UPDATE",
+              "description": "=Rsync asks user to share his weekly update. Example: ask user to share weekly update"
+            },
+            {
+              "category": "USER_RESUME_CORRECT",
+              "description": "User shared their resume in right format. Usually contains their Name skills work experience"
+            },
+            {
+              "category": "USER_RESUME_WRONG",
+              "description": "User shared resume in wrong format, rsync system wasnt able to process it . Example:  looks like uploaded file is not a resume"
+            },
+            {
+              "category": "USER_INCOMPLETE_UPDATE",
+              "description": "User is providing short information about  their update, things they learn, contribution to company.   \nExample 1: Learned n8n, \nExample 2: Implemented automation.\nExample 3: Resolved manual task of marketing team\nAs user shared incomplete update, we should ask user to clearify their learnings in the previous week, contributions they make to the company, impact of the contribution. \nUser can share learnings, contributions and impact in different message, you should track it. \n\n"
+            },
+            {
+              "category": "USER_COMPLETE_UPDATE",
+              "description": "User is providing complete information about  their update, things they learn, contribution to company.    \nExample 1: Learned n8n, Implemented automation, Resolved manual task of marketing team As user shared incomplete update, \n\nWe should make it shound professional and ask user if it looks good to him. If user complains, we should rephrase. "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        -460
+      ],
+      "id": "34c53199-dfb0-49b8-959c-b4a1ec8fc0bc",
+      "name": "Text Classifier",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        -20
+      ],
+      "id": "fa155fca-75fb-44f0-928d-7b1f846122e7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3Bfip01C8oYvKUqp",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3558b90e-ab07-4b9c-b1f3-3a5c5249b7ea",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "8c9412c7-f866-4462-93d9-c12f51bfc3a4",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -720
+      ],
+      "id": "537d8fd4-5c59-4b13-9e01-e947efc05724",
+      "name": "Edit Fields8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "08a90911-6a28-4af5-b68e-37a6a365733b",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "1dfc5da5-2c3d-4c93-b507-ba8a85099493",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "38adb581-cba9-4bec-960c-26a56efa962f",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "2b0532d4-43d5-4bb0-8ab5-f8d62b5827b0",
+              "name": "type",
+              "value": "userQuestion",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -1040
+      ],
+      "id": "da37da2a-c0d7-486b-bff6-cf5c357575b3",
+      "name": "userQuestion"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "340354ee-5d4f-46d4-b455-c3d9dfa02faf",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "0186300d-f19c-4ac5-91b3-9855d2f8daed",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "773a3006-da2f-48f2-9a15-fe9fd0cde615",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "b812e2fe-a9eb-4951-a590-b82b36f5ed93",
+              "name": "type",
+              "value": "userGreetings",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -880
+      ],
+      "id": "91324607-c537-4960-9077-679adb2e8d4c",
+      "name": "userGreetings"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89f01897-7230-47a4-98b4-3f73d7cf53eb",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "05a9e6cd-cb01-4dd3-840e-2ad3249b750c",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "e08c902a-4e4d-4023-9a88-8137ea8e6b96",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "9153ca9a-33a4-4e4f-a1fc-939afe40d652",
+              "name": "type",
+              "value": "userHelp",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -720
+      ],
+      "id": "1939204d-1e3c-4911-9867-8d9e4092bc05",
+      "name": "userHelp"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b7fe0b53-0158-4d11-be72-1bdd67f8fb34",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "c2c37d1b-1f29-4755-8d97-9903250c2fb2",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "421b2933-813b-4178-9fd3-24838279319b",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "5810c112-585b-4210-9828-fd393df5338a",
+              "name": "type",
+              "value": "offTopic",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -560
+      ],
+      "id": "16ad70a8-df03-40b6-a2ff-a601cdcc7036",
+      "name": "offTopic"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d253190c-1303-46b5-bdb8-c944bb5b9d57",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "fadbe8da-7ed2-4d82-8e6f-04b51653d392",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "5ee690ba-331d-492e-8896-b8a65eccbc74",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "f768077b-21bf-46ff-8c34-2058d8ba3efd",
+              "name": "type",
+              "value": "rsyncFollowUpWithUserForUpdate",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -380
+      ],
+      "id": "e1e1b001-ea76-434a-afee-461f83bd31b8",
+      "name": "rsyncFollowUpWithUserForUpdate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e2c4cab5-155d-4b93-8f30-130709a99efa",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "55b13d1e-85c5-4e46-af2d-b3ae83baf831",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "0c856b85-a006-4b15-84e0-9690233053a7",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "bc7677b1-8a87-4d68-b836-588f8078e8c8",
+              "name": "type",
+              "value": "userResumeCorrect",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -200
+      ],
+      "id": "65287296-1159-4234-82bb-a81420f73ca6",
+      "name": "userResumeCorrect"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ff1e5836-04ef-46d8-9b31-69ca4c23f786",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "bbf6ec1e-4e19-42bb-a1f8-699e7849e815",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "e25f7941-ac05-4982-baa4-c99f6cefa9c6",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "68a73210-c44c-4ffd-a0d1-89251e07b163",
+              "name": "type",
+              "value": "userResumeWrong",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        -20
+      ],
+      "id": "1d274d69-8c7f-49c6-a08d-f9c70bb5218f",
+      "name": "userResumeWrong"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6277933e-8041-41e3-8769-b50394578e70",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "fa4a547a-a3d1-4c69-b79c-9b282dbe1cfe",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "0361f937-1cbb-4744-ac9d-688ef27d38c0",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "e83e3315-b041-4d37-a778-d3cf619a3608",
+              "name": "type",
+              "value": "userIncompleteUpdate",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        160
+      ],
+      "id": "d55112b1-c97a-45a6-9986-c6fc8a657f46",
+      "name": "userIncompleteUpdate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6277933e-8041-41e3-8769-b50394578e70",
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}",
+              "type": "string"
+            },
+            {
+              "id": "fa4a547a-a3d1-4c69-b79c-9b282dbe1cfe",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "0361f937-1cbb-4744-ac9d-688ef27d38c0",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "e83e3315-b041-4d37-a778-d3cf619a3608",
+              "name": "type",
+              "value": "userCompleteUpdate",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1260,
+        360
+      ],
+      "id": "bf3b4000-5c0e-4d16-b5ab-58f7ba8a43fe",
+      "name": "userCompleteUpdate"
     }
   ],
   "pinData": {},
@@ -1286,7 +1770,7 @@
       "main": [
         [
           {
-            "node": "phoneNumber",
+            "node": "Edit Fields8",
             "type": "main",
             "index": 0
           }
@@ -1432,7 +1916,7 @@
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Text Classifier",
             "type": "main",
             "index": 0
           }
@@ -1572,13 +2056,202 @@
           }
         ]
       ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields8": {
+      "main": [
+        [
+          {
+            "node": "phoneNumber",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [],
+        [
+          {
+            "node": "userQuestion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "userGreetings",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "userHelp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "offTopic",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "rsyncFollowUpWithUserForUpdate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "userResumeCorrect",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "userResumeWrong",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "userIncompleteUpdate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "userCompleteUpdate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userQuestion": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userGreetings": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userHelp": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "offTopic": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "rsyncFollowUpWithUserForUpdate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userResumeCorrect": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userResumeWrong": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userIncompleteUpdate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "userCompleteUpdate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "8e907bdb-78ae-494a-9060-706533aa37f3",
+  "versionId": "a8e3138b-b8e2-4c59-aefc-56b3b87677be",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "07c6ef78a35c2883a05a3ad010352ba4756c8216f45cb3d16a147f646cae9bce"
